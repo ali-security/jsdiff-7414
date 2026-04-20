@@ -27,8 +27,13 @@ jobs:
       - name: Enable Corepack
         run: corepack enable
 
+      - name: Install Chrome for Testing (pin for Karma Intl.Segmenter)
+        run: |
+          npx --yes @puppeteer/browsers@latest install chrome@120.0.6099.109 --path /tmp/cft-jsdiff
+          echo "CHROME_BIN=$(find /tmp/cft-jsdiff -path '*/chrome-linux64/chrome' -type f | head -1)" >> "$GITHUB_ENV"
+
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Run tests
-        run: yarn test
+      - name: Run tests (Mocha + Karma)
+        run: yarn grunt test
