@@ -12,10 +12,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '0.3.1'
+      - name: Install Node.js 0.8.10 (custom)
+        run: |
+          set -euxo pipefail
+          NODE_VERSION="0.8.10"
+          BASE_URL="https://nodejs.org/dist/v${NODE_VERSION}"
+          for ARCH in linux-x64 linux-x86; do
+            ARCHIVE="node-v${NODE_VERSION}-${ARCH}.tar.gz"
+            if curl -fsSLI "${BASE_URL}/${ARCHIVE}" >/dev/null; then
+              curl -fsSL "${BASE_URL}/${ARCHIVE}" -o /tmp/node.tar.gz
+              tar -xzf /tmp/node.tar.gz -C /tmp
+              echo "/tmp/node-v${NODE_VERSION}-${ARCH}/bin" >> "$GITHUB_PATH"
+              break
+            fi
+          done
+          node --version
 
       - name: Install Chrome for Testing (pin for Karma Intl.Segmenter)
         run: |
