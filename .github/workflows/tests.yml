@@ -12,30 +12,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install Node.js 0.8.10 (custom)
-        run: |
-          set -euxo pipefail
-          NODE_VERSION="0.8.10"
-          BASE_URL="https://nodejs.org/dist/v${NODE_VERSION}"
-          for ARCH in linux-x64 linux-x86; do
-            ARCHIVE="node-v${NODE_VERSION}-${ARCH}.tar.gz"
-            if curl -fsSLI "${BASE_URL}/${ARCHIVE}" >/dev/null; then
-              curl -fsSL "${BASE_URL}/${ARCHIVE}" -o /tmp/node.tar.gz
-              tar -xzf /tmp/node.tar.gz -C /tmp
-              echo "/tmp/node-v${NODE_VERSION}-${ARCH}/bin" >> "$GITHUB_PATH"
-              break
-            fi
-          done
-          node --version
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '6.17.1'
 
       - name: Install Chrome for Testing (pin for Karma Intl.Segmenter)
         run: |
-          set -euxo pipefail
-          CHROME_VERSION="120.0.6099.109"
-          mkdir -p /tmp/cft-jsdiff
-          curl -fsSL "https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/linux64/chrome-linux64.zip" -o /tmp/chrome-linux64.zip
-          python3 -m zipfile -e /tmp/chrome-linux64.zip /tmp/cft-jsdiff
-          echo "CHROME_BIN=/tmp/cft-jsdiff/chrome-linux64/chrome" >> "$GITHUB_ENV"
+          npx --yes @puppeteer/browsers@latest install chrome@120.0.6099.109 --path /tmp/cft-jsdiff
+          echo "CHROME_BIN=$(find /tmp/cft-jsdiff -path '*/chrome-linux64/chrome' -type f | head -1)" >> "$GITHUB_ENV"
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
