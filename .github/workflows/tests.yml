@@ -19,8 +19,12 @@ jobs:
 
       - name: Install Chrome for Testing (pin for Karma Intl.Segmenter)
         run: |
-          npx --yes @puppeteer/browsers@latest install chrome@120.0.6099.109 --path /tmp/cft-jsdiff
-          echo "CHROME_BIN=$(find /tmp/cft-jsdiff -path '*/chrome-linux64/chrome' -type f | head -1)" >> "$GITHUB_ENV"
+          set -euxo pipefail
+          CHROME_VERSION="120.0.6099.109"
+          mkdir -p /tmp/cft-jsdiff
+          curl -fsSL "https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/linux64/chrome-linux64.zip" -o /tmp/chrome-linux64.zip
+          python3 -m zipfile -e /tmp/chrome-linux64.zip /tmp/cft-jsdiff
+          echo "CHROME_BIN=/tmp/cft-jsdiff/chrome-linux64/chrome" >> "$GITHUB_ENV"
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
