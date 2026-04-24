@@ -1,6 +1,7 @@
 .babelrc
 .eslintrc
 .gitignore
+.github
 .npmignore
 .vscode
 components

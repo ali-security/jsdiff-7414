@@ -2,30 +2,20 @@ name: Test
 
 on:
   push:
-    branches:
-      - "**"
   pull_request:
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [18, 20]
-
     steps:
-      - name: Check out repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: yarn
-
-      - name: Enable Corepack
-        run: corepack enable
+          node-version: '0.3.1'
 
       - name: Install Chrome for Testing (pin for Karma Intl.Segmenter)
         run: |
