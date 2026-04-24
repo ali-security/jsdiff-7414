@@ -15,7 +15,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '8.10.0'
+          node-version: '18.11.0'
 
       - name: Install Chrome for Testing (pin for Karma Intl.Segmenter)
         run: |
